@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mamos</title>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--    <link rel="stylesheet" href="static/table.css">-->
+    <style>
+        body { overflow:hidden; margin:0; font-size: xx-large; }
+        input { font-size : 15px; width: 10em;  height: 5em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+        h1 { font-size: 1.2em; margin: .6em 0; }
+        h2 { font-size: 1.0em; margin: .6em 0; }
+        div#users-contain { width: 1700px; margin: 20px 0; }
+        div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+        .ui-dialog .ui-state-error { padding: .3em; }
+        .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    </style>
+
+    {% block content %}
+        <form action="" method="POST">
+            {{form.hidden_tag()}}
+            <p>
+                <h1 id="h1"></h1>
+                <h2>Please add the mamos ip</h2>
+                {{ form.ip(size=100) }}
+                <input type="submit" name="submit_button" value="Add" size="70">
+            </p>
+        </form>
+    {% endblock %}
+
+    <div id="users-contain" class="ui-widget">
+        <table id="table-box" class="ui-widget ui-widget-content">
+            <thead>
+              <tr class="ui-widget-header ">
+                {% for header in headings %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+
+
+            {% for row in data %}
+                <tr>
+                    {% for cell in row %}
+                        <td>...</td>
+                    {% endfor %}
+                    <td><input type="button" value="remove"></td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    <script>
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        document.getElementById("h1").innerHTML = "Current Monitor Date: " + date;
+    </script>
+
+    <script>
+        $('input[type="button"]').click(function(e){
+           var tds = $(this).closest('tr').children('td');
+           //alert(tds[0].innerHTML)
+           var name = tds[0].innerHTML;
+           $.ajax({
+                type: "POST",
+                url: "/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                data: JSON.stringify({ "remove_name": name }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            });
+           $(this).closest('tr').remove()
+        })
+    </script>
+
+    <script>
+        $.ajaxSetup({
+            async: false,
+            cache: false
+        });
+
+        window.setInterval( function () {
+            refresh()
+        }, 8000);
+
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function refresh(){
+            $.ajax({
+                type: "GET",
+                url: "/update",
+            });
+
+            sleep(2000);
+            table = document.getElementById("table-box");
+            rows = table.rows;
+
+            $.getJSON("../static/data.json", function(data_json) {
+                var sorted_ips = [];
+                for (i = 1; i < (rows.length); i++) {
+                    for (ip in data_json){
+                        var name = data_json[ip]["name"];
+                        var res = name.replace("マウントサブ", "");
+                        res = res.replace("号機", "");
+                        if (res.includes(i)){
+                            sorted_ips.push(ip);
+                        }
+                    }
+                }
+
+                n = 1;
+                for (idx in sorted_ips){
+                    ip = sorted_ips[idx];
+
+                    var x = table.rows[n].cells;
+                    n += 1
+                    x[0].innerHTML = data_json[ip]["name"];
+                    for (i = 0; i < 8; i++) {
+                      x[i+1].innerHTML = data_json[ip]["product"][i];
+                    }
+                    for (i = 8; i < 11; i++) {
+                      x[i].innerHTML = data_json[ip]["alarm"][i-8];
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+<!--                var sorted_ips = [];-->
+
+<!--                for (const x of Array(6).keys()) {-->
+<!--                    for (ip in data_json){-->
+<!--                        name = data_json[ip]["name"];-->
+<!--                        if (name.includes(x)){-->
+<!--                            sorted_ips.push(ip);-->
+<!--                        }-->
+<!--                    }-->
+<!--                }-->
