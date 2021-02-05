@@ -1,0 +1,109 @@
+{% extends "top_layout.html" %}
+{% block content %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
+    <a href="/"><h2 id="cur-date"></h2></a>
+
+    <div>
+        <form action="/date" method="GET">
+            カレンダー:
+            <input id="checkdate" type="text" name="check_date" size="70" autocomplete="off">
+            <input type="submit" name="submit_button" value="参加" size="70">
+        </form>
+        <form action="" method="POST">
+            {{form.hidden_tag()}}
+            Mamos IP:
+            {{ form.ip(size=100) }}
+            <input type="submit" name="submit_button" value="追加" size="70">
+        </form>
+    </div>
+
+    <div id="users-contain" class="ui-widget">
+        <table id="table-box" class="ui-widget ui-widget-content">
+            <thead>
+              <tr class="ui-widget-header ">
+                {% for header in headings %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+
+
+            {% for row in data %}
+                <tr>
+                    <td><a href="http://{{ row[0] }}/image_monitor1/"> {{ row[0] }}</a></td>
+                    <td>{{ row[1] }}</td>
+                    <td><input type="button" value="消す"></td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    <script>
+        var today = new Date();
+        var cur_date = today.getFullYear()+'-'+("0" + (today.getMonth() + 1)).slice(-2)+'-'+("0" + (today.getDate())).slice(-2);
+
+        document.getElementById("cur-date").innerHTML = "今日: " + cur_date;
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $("#checkdate").datepicker();
+        });
+    </script>
+
+    <script>
+        $('input[type="button"]').click(function(e){
+           var tds = $(this).closest('tr').children('td');
+           //alert(tds[0].innerHTML)
+           var name = tds[1].innerHTML;
+           $.ajax({
+                type: "POST",
+                url: "/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                data: JSON.stringify({ "remove_name":name }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            });
+           $(this).closest('tr').remove()
+        })
+    </script>
+{% endblock %}
+
+<!--<body>-->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>-->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>-->
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css"/>-->
+<!--&lt;!&ndash;    <link rel="stylesheet" href="static/table.css">&ndash;&gt;-->
+<!--    <style>-->
+<!--        body { overflow:scroll; margin:0; font-size: xx-large; }-->
+<!--        input { font-size : 15px; width: 10em;  height: 5em; }-->
+<!--        fieldset { padding:0; border:0; margin-top:25px; }-->
+<!--        h1 { font-size: 1.2em; margin: .6em 0; }-->
+<!--        h2 { font-size: 1.0em; margin: .6em 0; }-->
+<!--        div#users-contain { width: 1700px; margin: 20px 0; }-->
+<!--        div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }-->
+<!--        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }-->
+<!--        .ui-dialog .ui-state-error { padding: .3em; }-->
+<!--        .validateTips { border: 1px solid transparent; padding: 0.3em; }-->
+<!--    </style>-->
+
+
+
+
+
+<!--                var sorted_ips = [];-->
+
+<!--                for (const x of Array(6).keys()) {-->
+<!--                    for (ip in data_json){-->
+<!--                        name = data_json[ip]["name"];-->
+<!--                        if (name.includes(x)){-->
+<!--                            sorted_ips.push(ip);-->
+<!--                        }-->
+<!--                    }-->
+<!--                }-->
