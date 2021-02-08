@@ -30,7 +30,7 @@ class MamosNetwork(sql_db.Model):
         return '<MamosNetwork %r>' % self.ip
 
 
-headings_main = ("IP", "名前", "消す")
+headings_main = ("IPアドレス", "設備名称", "状態", "削除")
 headings = ("名前", "品目１", "品目２", "品目３", "品目４", "品目５", "品目６", "品目７", "異常１", "異常２", "異常３")
 
 
@@ -60,7 +60,10 @@ def db_load():
     output = []
     for ip, name in zip(sql_ips, sql_name):
         if check_online_ip(ip[0]):
-            output.append([ip[0], name[0]])
+            status = "オンライン"
+        else:
+            status = "オフライン"
+        output.append([ip[0], name[0], status])
     return output
 
 
@@ -93,19 +96,16 @@ def main():
     if request.method == 'POST':
         if form.validate_on_submit():
             if request.form['submit_button'] == '追加':
-                try:
-                    today = date.today()
-                    api_result = download_api_date(form.ip.data, today.strftime("%Y-%m-%d"))
-                    if api_result:
-                        name = api_result["name"]
-                        add_data = MamosNetwork(ip=form.ip.data, name=name)
-                        sql_db.session.add(add_data)
-                        sql_db.session.commit()
-                        db_data.append([form.ip.data, name])
-                        db_data.sort(key=take_second)
-                except:
-                    return "", 504
-                return render_template("main.html", headings=headings_main, data=db_data, form=form)
+                today = date.today()
+                api_result = download_api_date(form.ip.data, today.strftime("%Y-%m-%d"))
+                if api_result:
+                    name = api_result["name"]
+                    add_data = MamosNetwork(ip=form.ip.data, name=name)
+                    sql_db.session.add(add_data)
+                    sql_db.session.commit()
+                    db_data.append([form.ip.data, name])
+                    db_data.sort(key=take_second)
+                    return render_template("main.html", headings=headings_main, data=db_data, form=form)
         else:
             result = request.json
             if result:
@@ -127,25 +127,24 @@ def query_realtime_today():
     today = date.today()
 
     for ip in ips:
-        api_result = download_api_date(ip, today.strftime("%Y-%m-%d"))
-        if api_result:
-            db[ip] = api_result
+        if check_online_ip(ip):
+            api_result = download_api_date(ip, today.strftime("%Y-%m-%d"))
+            if api_result:
+                db[ip] = api_result
     today.strftime("%Y-%m-%d")
     with open('static/data.json', 'w') as outfile:
         json.dump(db, outfile)
+    print(today, db)
     return '', 200
 
 
 @app.route('/date', methods=['GET'])
 def monitor():
     form = MamosNetworkForm()
-    ips = [col[0] for col in db_load()]
+    ips = [col[0] for col in db_load() if col[2] == "オンライン"]
     db = {}
 
-    date = "%s-%s-%s" % (
-        request.values["check_date"].split("/")[2],
-        request.values["check_date"].split("/")[0],
-        request.values["check_date"].split("/")[1])
+    date = request.values["check_date"]
 
     for ip in ips:
         api_result = download_api_date(ip, date)

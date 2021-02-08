@@ -12,18 +12,24 @@
         body { overflow:scroll; margin:0; font-size: xx-large; }
         input { font-size : 1.6em; width: 6em;  height: 2em; }
         fieldset { padding:0; border:0; margin-top:25px; }
-        h1 { font-size: 2.4em; margin: .6em 0;  }
-        h2 { font-size: 1.6em; margin: .6em 0; background: #9FA5C8; background-clip: border-box; padding: 15px; color: #334FFF;}
+        h1 { font-size: 0.8em; }
+        h2 { font-size: 1.6em; background: #9FA5C8; background-clip: border-box; padding: 15px; color: #334FFF; }
         h3 { font-size: 1.0em; margin: .6em 0; background: #CFD0D5; background-clip: border-box; padding: 15px;}
         div#users-contain { width: 1700px; margin: 20px 0; }
         div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+        div#users-contain table td, div#users-contain table th { border: 5px solid #eee; padding: .6em 10px; text-align: left; }
         .ui-dialog .ui-state-error { padding: .3em; }
         .validateTips { border: 1px solid transparent; padding: 0.3em; }
         form { display: inline-block; padding: 20px}
+        #home { margin: -0.8em 0em; padding: 15px; }
+        table, tr, th {
+          border: 7 solid black;
+          border-collapse: collapse;
+        }
     </style>
-      <a href="/"><img src="/static/img/logo.png" alt="Home"/></a>
 
+    <a href="/"><img src="/static/img/logo.png" alt="Home"/></a>
+    <h1>Machine all monitoring system</h1>
     {% block content %}
     {% endblock %}
     <br></br>

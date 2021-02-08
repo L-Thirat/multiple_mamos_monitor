@@ -1,17 +1,20 @@
 {% extends "top_layout.html" %}
 {% block content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <a href="/"><h2>表示データ: <i id="cur-date">{{ data.date }}</i></h2></a>
+    <p id="home">
+        <a href="/">
+          <img src="/static/img/home.png" align="left" width="100" height="100">
+        </a>
+    </p>
+    <h2 align="left" ><text>表示データ: </text><text id="cur-date">{{ data.date }}</text></h2>
 
     <div id="users-contain" class="ui-widget">
         <table id="table-box" class="ui-widget ui-widget-content">
-            <thead>
-              <tr class="ui-widget-header ">
-                {% for header in headings %}
-                    <th>{{ header }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
+            <tr class="ui-widget-header ">
+            {% for header in headings %}
+                <th>{{ header }}</th>
+            {% endfor %}
+            </tr>
 
 
             {% for row in data.log %}
@@ -51,56 +54,3 @@
         }
     </script>
 {% endblock %}
-
-
-<!--                var sorted_ips = [];-->
-
-<!--                for (const x of Array(6).keys()) {-->
-<!--                    for (ip in data_json){-->
-<!--                        name = data_json[ip]["name"];-->
-<!--                        if (name.includes(x)){-->
-<!--                            sorted_ips.push(ip);-->
-<!--                        }-->
-<!--                    }-->
-<!--                }-->
-
-
-<!--        function refresh(){-->
-<!--            $.ajax({-->
-<!--                type: "GET",-->
-<!--                url: "/update",-->
-<!--            });-->
-
-<!--            sleep(2000);-->
-<!--            table = document.getElementById("table-box");-->
-<!--            rows = table.rows;-->
-
-<!--            $.getJSON("../static/data.json", function(data_json) {-->
-<!--                var sorted_ips = [];-->
-<!--                for (i = 1; i < (rows.length); i++) {-->
-<!--                    for (ip in data_json){-->
-<!--                        var name = data_json[ip]["name"];-->
-<!--                        var res = name.replace("マウントサブ", "");-->
-<!--                        res = res.replace("号機", "");-->
-<!--                        if (res.includes(i)){-->
-<!--                            sorted_ips.push(ip);-->
-<!--                        }-->
-<!--                    }-->
-<!--                }-->
-
-<!--                n = 1;-->
-<!--                for (idx in sorted_ips){-->
-<!--                    ip = sorted_ips[idx];-->
-
-<!--                    var x = table.rows[n].cells;-->
-<!--                    n += 1-->
-<!--                    x[0].innerHTML = data_json[ip]["name"];-->
-<!--                    for (i = 0; i < 8; i++) {-->
-<!--                      x[i+1].innerHTML = data_json[ip]["product"][i];-->
-<!--                    }-->
-<!--                    for (i = 8; i < 11; i++) {-->
-<!--                      x[i].innerHTML = data_json[ip]["alarm"][i-8];-->
-<!--                    }-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
