@@ -103,9 +103,9 @@ def main():
                     add_data = MamosNetwork(ip=form.ip.data, name=name)
                     sql_db.session.add(add_data)
                     sql_db.session.commit()
-                    db_data.append([form.ip.data, name])
+                    db_data.append([form.ip.data, name, "オンライン"])
                     db_data.sort(key=take_second)
-                    return render_template("main.html", headings=headings_main, data=db_data, form=form)
+                return render_template("main.html", headings=headings_main, data=db_data, form=form)
         else:
             result = request.json
             if result:
@@ -141,14 +141,16 @@ def query_realtime_today():
 @app.route('/date', methods=['GET'])
 def monitor():
     form = MamosNetworkForm()
-    ips = [col[0] for col in db_load() if col[2] == "オンライン"]
+    ips_online = [col[0] for col in db_load() if col[2] == "オンライン"]
+    ips = []
     db = {}
 
     date = request.values["check_date"]
 
-    for ip in ips:
+    for ip in ips_online:
         api_result = download_api_date(ip, date)
         if api_result:
+            ips.append(ip)
             db[ip] = api_result
 
     data = {"date": date, "log": json2data(db, ips)}
