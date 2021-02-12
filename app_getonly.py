@@ -62,9 +62,9 @@ def db_load():
     output = []
     for ip, name in zip(sql_ips, sql_name):
         if check_online_ip(ip[0]):
-            status = "オンライン"
+            status = "O"
         else:
-            status = "オフライン"
+            status = "X"
         output.append([ip[0], name[0], status])
     return output
 
@@ -107,7 +107,7 @@ def main():
                     add_data = MamosNetwork(ip=form.ip.data, name=name)
                     sql_db.session.add(add_data)
                     sql_db.session.commit()
-                    db_data.append([form.ip.data, name, "オンライン"])
+                    db_data.append([form.ip.data, name, "O"])
                     db_data.sort(key=take_second)
                 return render_template("main.html", headings=headings_main, data=db_data, form=form)
         else:
