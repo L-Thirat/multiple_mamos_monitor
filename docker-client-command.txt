@@ -1,0 +1,33 @@
+# running
+docker ps
+-> all runned
+docker ps --all --filter "status=exited"
+docker images
+
+# build
+docker build -t <REPOSITORY:(:TAG)> .
+
+# start/stop
+docker start -a <container id/ name> # -a = attack
+docker stop <container id/ name>
+
+docker run -p 9000:80 nginx # run with show result => ctrl-c to go to bg
+docker run -d 9000:80 nginx --name <name> # run on bg # we can use <name instead c.id>
+docker run -p 3000:3000 <REPOSITORY(:TAG)>
+
+# clear container cache
+docker system prune
+docker volume prune
+docker network ls
+docker image rm <ImageID>
+
+# send cmd to container
+- go to container
+docker exec -it <c.id> sh
+- send cmd
+docker exec -it <c.id> <command: sh/bash>
+** nginx: /usr/share/nginx/html + /etc/nginx/nginx.conf
+** mapping port
+
+# docker hub
+docker image tag <REPOSITORY> <dockerID/<anyname>>

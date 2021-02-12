@@ -13,6 +13,8 @@ import os
 import time
 import atexit
 
+import logging as logger
+
 SECRET_KEY = os.urandom(32)
 
 app = Flask(__name__)
@@ -187,6 +189,7 @@ def update_table():
 
 
 if __name__ == '__main__':
+    logger.debug("Starting Flask Server")
     if True:
         scheduler = BackgroundScheduler(max_instances ='2')
         # calling data delay 30 sec
