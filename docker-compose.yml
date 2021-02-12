@@ -1,0 +1,12 @@
+version: '3.5.3'
+services:
+  flasksemaphore:
+    image: pymamos
+    container_name: mamos
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/opt/
