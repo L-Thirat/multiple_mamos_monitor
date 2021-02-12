@@ -1,4 +1,4 @@
-# todo make migrations migrate
+# todo history data -> db?
 
 from datetime import date
 from flask import Flask, redirect, url_for, request, render_template
@@ -76,14 +76,16 @@ def download_api_date(ip, date):
     return r
 
 
-def json2data(db, ips, edit=False):
+def json2data(db, ips):
     data = []
     for ip in ips:
-        if edit:
-            cur = [ip, db[ip]["name"]]
-        else:
+        if ip in db:
             cur = [db[ip]["name"]] + db[ip]["product"] + db[ip]["alarm"]
+        else:
+            name = MamosNetwork.query.filter(MamosNetwork.ip == ip).first()
+            cur = [name.name, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
         data.append(tuple(cur))
+
     return data
 
 
@@ -131,6 +133,9 @@ def query_realtime_today():
             api_result = download_api_date(ip, today.strftime("%Y-%m-%d"))
             if api_result:
                 db[ip] = api_result
+            # else:
+            #     name = MamosNetwork.query.filter(MamosNetwork.ip == ip).first()
+            #     db[ip] = {'alarm': ["-", "-", "-"], 'name': name.name, 'product': ["-", "-", "-", "-", "-", "-", "-"]}
     today.strftime("%Y-%m-%d")
     with open('static/data.json', 'w') as outfile:
         json.dump(db, outfile)
@@ -140,29 +145,52 @@ def query_realtime_today():
 
 @app.route('/date', methods=['GET'])
 def monitor():
-    form = MamosNetworkForm()
-    ips_online = [col[0] for col in db_load() if col[2] == "オンライン"]
-    ips = []
-    db = {}
+    # form = MamosNetworkForm()
+    # ips = [col[0] for col in db_load()]
+    # db = {}
+    #
+    date_req = request.values["check_date"]
+    #
+    # for ip in ips:
+    #     api_result = download_api_date(ip, date)
+    #     if api_result:
+    #         db[ip] = api_result
+    #     else:
+    #         name = MamosNetwork.query.filter(MamosNetwork.ip == ip).first()
+    #         db[ip] = {'alarm': ["-", "-", "-"], 'name': name.name, 'product': ["-", "-", "-", "-", "-", "-", "-"]}
+    #
+    # data = {"date": date, "log": json2data(db, ips)}
 
-    date = request.values["check_date"]
+    return render_template("table.html", headings=headings, data={"date": date_req})
 
-    for ip in ips_online:
-        api_result = download_api_date(ip, date)
-        if api_result:
-            ips.append(ip)
-            db[ip] = api_result
 
-    data = {"date": date, "log": json2data(db, ips)}
+@app.route('/update_table', methods=['GET'])
+def update_table():
+    date_req = request.values["check_date"]
+    today = date.today()
+    if today.strftime("%Y-%m-%d") == date_req:
+        ips = [col[0] for col in db_load()]
+        with open('static/data.json', 'r') as outfile:
+            db = json.load(outfile)
+        data = {"date": date_req, "log": json2data(db, ips)}
+    else:
+        ips = [col[0] for col in db_load()]
+        db = {}
 
-    return render_template("table.html", headings=headings, data=data, form=form)
+        for ip in ips:
+            api_result = download_api_date(ip, date_req)
+            if api_result:
+                db[ip] = api_result
+
+        data = {"date": date_req, "log": json2data(db, ips)}
+    return render_template("update_table.html", headings=headings, data=data)
 
 
 if __name__ == '__main__':
     if True:
-        scheduler = BackgroundScheduler()
+        scheduler = BackgroundScheduler(max_instances ='2')
         # calling data delay 30 sec
-        scheduler.add_job(func=query_realtime_today, trigger="interval", seconds=30)
+        scheduler.add_job(func=query_realtime_today, trigger="interval", seconds=5, max_instances=1)
         scheduler.start()
 
         # Shut down the scheduler when exiting the app

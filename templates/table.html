@@ -1,37 +1,15 @@
 {% extends "top_layout.html" %}
 {% block content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <p id="home">
-        <a href="/">
-          <img src="/static/img/home.png" align="left" width="100" height="100">
-        </a>
-    </p>
-    <h2 align="left" ><text>表示データ: </text><text id="cur-date">{{ data.date }}</text></h2>
 
     <div id="users-contain" class="ui-widget">
-        <table id="table-box" class="ui-widget ui-widget-content">
-            <tr class="ui-widget-header ">
-            {% for header in headings %}
-                <th>{{ header }}</th>
-            {% endfor %}
-            </tr>
-
-
-            {% for row in data.log %}
-                <tr>
-                    {% for cell in row %}
-                        <td>{{cell}}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-
-        </table>
+        Loading...
     </div>
 
     <script>
-        $.ajaxSetup({
-            async: false,
-            cache: false
+        $(document).ready( function(){
+            var select_date = document.getElementById("cur-date");
+            refresh(select_date.innerText);
         });
 
         window.setInterval( function () {
@@ -39,17 +17,14 @@
             var cur_date = today.getFullYear()+'-'+("0" + (today.getMonth() + 1)).slice(-2)+'-'+("0" + (today.getDate())).slice(-2);
             var select_date = document.getElementById("cur-date");
             if (cur_date === select_date.innerText){
-                refresh();
+              refresh(select_date.innerText);
             }
-        }, 30000);
+        }, 5000);
 
-        function sleep(ms) {
-          return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        function refresh(){
+        function refresh(select_date){
+          var url = "/update_table?check_date=" + select_date + "&submit_button=表示";
           setTimeout( function() {
-            location.reload()
+            $('#users-contain').load(url);
           }, 0);
         }
     </script>

@@ -1,0 +1,16 @@
+<table id="table-box" class="ui-widget ui-widget-content">
+    <tr class="ui-widget-header ">
+    {% for header in headings %}
+        <th>{{ header }}</th>
+    {% endfor %}
+    </tr>
+
+    {% for row in data.log %}
+        <tr>
+            {% for cell in row %}
+                <td>{{cell}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+</table>
