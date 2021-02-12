@@ -4,4 +4,4 @@ https://www.python.org/downloads/release/python-353/
 install
 pip install -r requirements.txt
 
-Docker
+Docker v1.0

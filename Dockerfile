@@ -1,5 +1,9 @@
 FROM python:3.5.3
 
+LABEL maintainer="Thirat"\
+      name="Thirat"\
+      version="1.0"
+
 RUN pip3 --no-cache install --upgrade pip 
 
 WORKDIR /app
