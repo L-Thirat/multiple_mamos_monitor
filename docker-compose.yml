@@ -3,7 +3,8 @@ services:
   web:
     image: few2012few/mamos-hub:lastest
     container_name: mamos
-    build: .
+    build: 
+      context: ./
     ports:
       - "5000:5000"
     volumes:
