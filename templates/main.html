@@ -15,13 +15,13 @@
 
     <div>
         <form action="/date" method="GET">
-            カレンダー:
+            カレンダー
             <input id="checkdate" type="text" name="check_date" size="70" autocomplete="off">
             <input type="submit" name="submit_button" value="表示" size="70">
         </form>
         <form action="" method="POST">
             {{form.hidden_tag()}}
-            Mamos IP:
+            Mamos IP
             {{ form.ip(size=100) }}
             <input type="submit" name="submit_button" value="追加" size="70">
         </form>
