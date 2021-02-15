@@ -8,6 +8,9 @@ RUN pip3 --no-cache install --upgrade pip
 
 WORKDIR /app
 
+ENV FLASK_APP=app_getonly.py
+ENV FLASK_RUN_HOST=0.0.0.0
+
 COPY . /app
 
 RUN pip3 --no-cache install -r requirements.txt
