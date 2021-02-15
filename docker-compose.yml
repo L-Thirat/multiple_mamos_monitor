@@ -2,11 +2,11 @@ version: '3.5.3'
 services:
   web:
     image: few2012few/mamos-hub:lastest
-    container_name: nice_stonebreaker
+    container_name: mamos
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "5001:5000"
+      - "5000:5000"
     volumes:
       - .:/opt/
