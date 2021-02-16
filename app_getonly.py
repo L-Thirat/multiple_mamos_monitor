@@ -193,7 +193,7 @@ if __name__ == '__main__':
     if True:
         scheduler = BackgroundScheduler(max_instances ='2')
         # calling data delay 30 sec
-        scheduler.add_job(func=query_realtime_today, trigger="interval", seconds=5, max_instances=1)
+        scheduler.add_job(func=query_realtime_today, trigger="interval", seconds=5, max_instances=10)
         scheduler.start()
 
         # Shut down the scheduler when exiting the app
